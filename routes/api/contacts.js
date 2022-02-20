@@ -41,7 +41,7 @@ router.delete('/:contactId', async (req, res, next) => {
     .json({ status: 'error', code: 404, message: 'Not Found' })
 })
 
-router.put('/:contactId', async (req, res, next) => {
+router.put('/:contactId', validateBody(contactSchema), async (req, res, next) => {
   const contact = await contactModel.updateContact(req.params.contactId, req.body)
   if (contact) {
     return res.json({ status: 'success', code: 200, payload: { contact } })
