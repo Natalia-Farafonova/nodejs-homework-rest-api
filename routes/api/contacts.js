@@ -1,55 +1,28 @@
 const express = require('express') 
 
-const contactModel = require("../../models/contacts");
-const { contactSchema } = require("./contacts-validation-schemes");
-const { validateBody } = require('../../middlewares/validation');
+const contactModel = require("../../models/contacts/index"); 
+
+const { getContacts,
+  getContactByIdController,
+  postContactController,
+  deleteContactController,
+  putContactController, } = require('../../controllers/contacts');
+const { contactSchema } = require("../../schemas/contacts-validation-schemes");
+const { validateBody } = require('../../middlewares/validation'); 
+
 
 
 const router = express.Router()
 
-router.get('/', async (req, res, next) => {
-  const contacts = await contactModel.listContacts()
-  res.json({
-    status: "success",
-    code: 200,
-    payload: { contacts } 
-  });
-});
+router.get('/', getContacts);
 
-router.get('/:contactId', async (req, res, next) => {
-   const contact = await contactModel.getContactById(req.params.contactId)
-  if (contact) {
-    return res.json({ status: 'success', code: 200, payload: { contact } })
-  }
-  return res
-    .status(404)
-    .json({ status: 'error', code: 404, message: 'Not Found' })
-})
+router.get('/:contactId', getContactByIdController);
 
-router.post('/', validateBody(contactSchema), async (req, res, next) => { 
-  const contact = await contactModel.addContact(req.body)
-  res.status(201).json({ status: 'success', code: 201, payload: { contact } })
-})
+router.post('/', validateBody(contactSchema), postContactController);
 
-router.delete('/:contactId', async (req, res, next) => {
- const contact = await contactModel.removeContact(req.params.contactId)
-  if (contact) {
-    return res.json({ status: 'success', code: 200, payload: { contact } })
-  }
-  return res
-    .status(404)
-    .json({ status: 'error', code: 404, message: 'Not Found' })
-})
+router.delete('/:contactId', deleteContactController);
 
-router.put('/:contactId', validateBody(contactSchema), async (req, res, next) => {
-  const contact = await contactModel.updateContact(req.params.contactId, req.body)
-  if (contact) {
-    return res.json({ status: 'success', code: 200, payload: { contact } })
-  }
-  return res
-    .status(404)
-    .json({ status: 'error', code: 404, message: 'Not Found' })
-}) 
+router.put('/:contactId', validateBody(contactSchema), putContactController); 
 
 
 
