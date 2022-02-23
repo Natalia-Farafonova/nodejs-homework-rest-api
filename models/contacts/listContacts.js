@@ -1,5 +1,5 @@
 const DB = require('../../db/db');
-const db = new DB('../../db/contacts.json');  
+const db = new DB('contacts.json');  
 
 const listContacts = async () => {
   return await db.read()
